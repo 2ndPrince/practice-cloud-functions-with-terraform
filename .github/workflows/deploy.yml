@@ -52,7 +52,9 @@ jobs:
 
       # 9. Terraform Init
       - name: Terraform Init
-        run: terraform init
+        run: |
+          cd terraform
+          terraform init
 
       # 10. Terraform Validate (optional, but recommended)
       - name: Terraform Validate
