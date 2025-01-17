@@ -58,12 +58,18 @@ jobs:
 
       # 10. Terraform Validate (optional, but recommended)
       - name: Terraform Validate
-        run: terraform validate
+        run: |
+          cd terraform
+          terraform validate
 
       # 11. Terraform Plan (optional but recommended before apply)
       - name: Terraform Plan
-        run: terraform plan
+        run: |
+          cd terraform
+          terraform plan
 
       # 12. Terraform Apply
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: |
+          cd terraform
+          terraform apply -auto-approve
