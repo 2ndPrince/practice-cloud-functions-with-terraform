@@ -14,13 +14,28 @@ provider "google" {
   zone    = var.project_zone
 }
 
-resource "google_storage_bucket" "function_bucket" {
-  name          = "${var.project_id}-function-bucket"
-  location      = var.project_region
-  force_destroy = true
+resource "random_id" "default" {
+  byte_length = 8
 }
 
-resource "google_cloudfunctions2_function" "current_time" {
+resource "google_storage_bucket" "function_bucket" {
+  name          = "practice-function-${random_id.default.hex}"
+  location      = var.project_region
+  uniform_bucket_level_access = true
+}
+
+data "archive_file" "default" {
+  type        = "zip"
+  output_path = "/tmp/function-source.zip"
+  source_dir  = "../dist"
+}
+resource "google_storage_bucket_object" "archive" {
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.function_bucket.name
+  source = data.archive_file.default.output_path
+}
+
+resource "google_cloudfunctions2_function" "default" {
   name        = "current-time-function-gen2"
   location    = "us-central1"
   description = "A function that returns the current time"
@@ -41,10 +56,4 @@ resource "google_cloudfunctions2_function" "current_time" {
     available_memory   = "256M"
     timeout_seconds    = 60
   }
-}
-
-resource "google_storage_bucket_object" "archive" {
-  name   = "function-source.zip"
-  bucket = google_storage_bucket.function_bucket.name
-  source = "../dist/function.zip"
 }
