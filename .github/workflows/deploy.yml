@@ -42,7 +42,7 @@ jobs:
 
       # 7. Set Google Project
       - name: Set Google Project
-        run: gcloud config set project YOUR_GCP_PROJECT_ID
+        run: gcloud config set project ${{ variables.GCP_PROJECT_ID }}
 
       # 8. Install Terraform
       - name: Set up Terraform
