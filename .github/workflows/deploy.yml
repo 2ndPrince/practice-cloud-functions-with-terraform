@@ -1,0 +1,67 @@
+name: Deploy to GCP Cloud Functions
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Build TypeScript
+      - name: Build
+        run: npm run build
+
+      # 5. Zip the build artifacts (dist folder, package.json, etc.)
+      - name: Zip artifacts
+        run: |
+          cd dist
+          zip -r ../function.zip .
+          cd ..
+
+      # 6. Authenticate to GCP using the Service Account
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      # 7. Set Google Project
+      - name: Set Google Project
+        run: gcloud config set project YOUR_GCP_PROJECT_ID
+
+      # 8. Install Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.5  # Example version
+
+      # 9. Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # 10. Terraform Validate (optional, but recommended)
+      - name: Terraform Validate
+        run: terraform validate
+
+      # 11. Terraform Plan (optional but recommended before apply)
+      - name: Terraform Plan
+        run: terraform plan
+
+      # 12. Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
