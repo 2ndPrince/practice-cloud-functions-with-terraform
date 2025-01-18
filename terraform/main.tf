@@ -52,8 +52,26 @@ resource "google_cloudfunctions2_function" "default" {
   }
 
   service_config {
+    service_account_email = google_service_account.github_actions.email
     max_instance_count = 1
     available_memory   = "256M"
     timeout_seconds    = 60
   }
+}
+
+resource "google_service_account" "github_actions" {
+  account_id   = "github-actions-sa"
+  display_name = "GitHub Actions Service Account"
+}
+
+resource "google_project_iam_member" "github_actions_sa_user" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
+
+resource "google_project_iam_member" "github_actions_sa_admin" {
+project = var.project_id
+role    = "roles/iam.serviceAccountAdmin"
+member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
