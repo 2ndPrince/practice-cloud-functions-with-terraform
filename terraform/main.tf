@@ -35,20 +35,21 @@ resource "google_storage_bucket_object" "archive" {
   source = data.archive_file.default.output_path
 }
 
-data "google_service_account" "github_actions" {
-  account_id = "github-actions-sa"
+resource "google_service_account" "github_actions" {
+  account_id   = "github-actions-sa"
+  display_name = "GitHub Actions Service Account"
 }
 
 resource "google_project_iam_member" "github_actions_sa_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_project_iam_member" "github_actions_sa_admin" {
   project = var.project_id
   role    = "roles/iam.serviceAccountAdmin"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_cloudfunctions2_function" "default" {
@@ -68,9 +69,13 @@ resource "google_cloudfunctions2_function" "default" {
   }
 
   service_config {
-    service_account_email = data.google_service_account.github_actions.email
+    service_account_email = google_service_account.github_actions.email
     max_instance_count    = 1
     available_memory      = "256M"
     timeout_seconds       = 60
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
