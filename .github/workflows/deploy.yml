@@ -72,4 +72,6 @@ jobs:
       - name: Terraform Apply
         run: |
           cd terraform
-          terraform apply -auto-approve
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo "Commit Hash: $COMMIT_HASH"
+          terraform apply -auto-approve -var "commit_hash=${COMMIT_HASH}"

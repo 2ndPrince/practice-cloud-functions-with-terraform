@@ -51,12 +51,8 @@ resource "google_project_iam_member" "github_actions_sa_admin" {
   member  = "serviceAccount:${data.google_service_account.github_actions.email}"
 }
 
-locals {
-  commit_hash = substr(trimspace(shell("git rev-parse HEAD")), 0, 7)
-}
-
 resource "google_cloudfunctions2_function" "default" {
-  name        = "current-time-${local.commit_hash}"
+  name        = "current-time-${var.commit_hash}"
   location    = "us-central1"
   description = "A function that returns the current time"
 
