@@ -11,3 +11,9 @@ variable "project_region" {
 variable "project_zone" {
   default = "us-central1-c"
 }
+
+variable "commit_hash" {
+  description = "The commit hash being appended to cloud function name for version controls with zero downtime"
+  type        = string
+  default     = "default"
+}
