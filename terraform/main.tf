@@ -52,7 +52,7 @@ resource "google_project_iam_member" "github_actions_sa_admin" {
 }
 
 resource "google_cloudfunctions2_function" "default" {
-  name        = "current-time"
+  name        = "current-time-${var.commit_hash}"
   location    = "us-central1"
   description = "A function that returns the current time"
 
