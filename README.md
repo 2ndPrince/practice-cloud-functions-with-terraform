@@ -35,3 +35,5 @@ Fast response -> Cache
 Database -> NoSQL and SQL both
 Monitoring -> Alert
 Analytics -> Data analytics
+
+###
