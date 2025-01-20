@@ -21,6 +21,17 @@
 3. Can't create cloud functions with same name
 
 
-### Technical Considerations
+### Technical Goals
 1. A designated service account for Cloud Run Functions
 2. Zero downtime deployment
+
+
+### Considerations
+Source -> algorithm, unit test, integration test, Serverless
+CI/CD -> Github Actions, Tekton, Cloud Build
+IaS -> TerraForm
+Security -> VPC, IAM (impersonate)
+Fast response -> Cache
+Database -> NoSQL and SQL both
+Monitoring -> Alert
+Analytics -> Data analytics
