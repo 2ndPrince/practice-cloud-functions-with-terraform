@@ -24,6 +24,7 @@
 ### Technical Goals
 1. A designated service account for Cloud Run Functions
 2. Zero downtime deployment
+3. No deployment if no change in app and infra
 
 
 ### Considerations
