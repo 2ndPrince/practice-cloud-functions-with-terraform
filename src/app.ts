@@ -30,3 +30,8 @@ export const collectOrdersFunction = (req: Request, res: Response) => {
     }
     res.status(404).send('Not Found');
 };
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
