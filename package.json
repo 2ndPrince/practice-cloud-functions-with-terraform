@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "ci-build": "tsc",
-    "start": "functions-framework --target=myFunction",
+    "start": "functions-framework --target=collectOrdersFunction",
     "predeploy": "npm run build"
   },
   "keywords": [],
