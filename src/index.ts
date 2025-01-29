@@ -1,5 +1,4 @@
 import { http } from '@google-cloud/functions-framework';
-import app, {collectOrdersFunction} from './app';
+import app from './app';
 
-http('myFunction', app);
-http('collectOrders', collectOrdersFunction);
+http('collectOrdersFunction', app);
