@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "ci-build": "tsc",
     "start": "functions-framework --target=myFunction",
     "predeploy": "npm run build"
   },

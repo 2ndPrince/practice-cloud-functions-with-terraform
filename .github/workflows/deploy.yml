@@ -25,7 +25,7 @@ jobs:
 
       # 4. Build TypeScript
       - name: Build
-        run: npm run build
+        run: npm run ci-build
 
       # 5. Zip the build artifacts (dist folder, package.json, etc.)
       - name: Zip artifacts
