@@ -53,13 +53,13 @@ resource "google_project_iam_member" "github_actions_sa_admin" {
 }
 
 resource "google_cloudfunctions2_function" "default" {
-  name        = "current-time-${var.commit_hash}"
+  name        = "collect-orders-${var.commit_hash}"
   location    = "us-central1"
   description = "A function that returns the current time"
 
   build_config {
     runtime     = "nodejs22"
-    entry_point = "currentTime" # Set the entry point
+    entry_point = "collectOrders" # Set the entry point
     source {
       storage_source {
         bucket = google_storage_bucket.function_bucket.name

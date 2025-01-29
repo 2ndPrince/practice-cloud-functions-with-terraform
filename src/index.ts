@@ -1,8 +1,6 @@
-import { Request, Response } from 'express';
-import { calculateSomething } from "./util/sampleUtil";
+import { http } from '@google-cloud/functions-framework';
+import app from './app';
+import { collectOrders } from "./functions/collectOrders";
 
-export const currentTime = (req: Request, res: Response): void => {
-    const now = new Date().toISOString();
-    const numberFromUtil = calculateSomething(1, 2);
-    res.status(200).json({ currentTime: now, message: "Hello YSLE", fromUtil: numberFromUtil });
-};
+http('myFunction', app);
+http('collectOrders', collectOrders);
