@@ -31,7 +31,10 @@ export const collectOrdersFunction = (req: Request, res: Response) => {
     res.status(404).send('Not Found');
 };
 
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+// Only start the server if this file is run directly (local dev scenario):
+if (require.main === module) {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log(`Local dev server listening on http://localhost:${port}`);
+    });
+}
