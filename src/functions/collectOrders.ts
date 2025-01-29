@@ -22,6 +22,8 @@ export const collectOrders = async (req: Request, res: Response): Promise<void> 
             message: 'Orders collected successfully!',
             data: newOrders,
         });
+
+        return newOrders;
     } catch (error) {
         console.error('Error in collectOrders function:', error);
         res.status(500).json({ error: 'Failed to collect orders' });
