@@ -9,6 +9,6 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "/tsconfig.json"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
