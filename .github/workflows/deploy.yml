@@ -30,7 +30,7 @@ jobs:
       # 5. Zip the build artifacts (dist folder, package.json, etc.)
       - name: Zip artifacts
         run: |
-          zip -r function.zip dist package.json
+          zip -r function.zip dist package.json tsconfig.json
 
       # 6. Authenticate to GCP using the Service Account
       - name: Authenticate to GCP
