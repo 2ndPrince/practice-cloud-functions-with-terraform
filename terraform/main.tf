@@ -24,15 +24,16 @@ resource "google_storage_bucket" "function_bucket" {
   uniform_bucket_level_access = true
 }
 
-data "archive_file" "default" {
-  type        = "zip"
-  output_path = "/tmp/function-source.zip"
-  source_dir  = "../dist"
-}
+# data "archive_file" "default" {
+#   type        = "zip"
+#   output_path = "/tmp/function-source.zip"
+#   source_dir  = "../dist"
+# }
 resource "google_storage_bucket_object" "archive" {
   name   = "function-source.zip"
   bucket = google_storage_bucket.function_bucket.name
-  source = data.archive_file.default.output_path
+#   source = data.archive_file.default.output_path
+  source = "../function.zip" # Use the pre-built archive from github workflow
 }
 
 data "google_service_account" "github_actions" {
