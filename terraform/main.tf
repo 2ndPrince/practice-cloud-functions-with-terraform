@@ -59,7 +59,7 @@ resource "google_cloudfunctions2_function" "default" {
 
   build_config {
     runtime     = "nodejs22"
-    entry_point = "collectOrders" # Set the entry point
+    entry_point = "collectOrdersFunction" # Set the entry point
     source {
       storage_source {
         bucket = google_storage_bucket.function_bucket.name
