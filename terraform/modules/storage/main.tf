@@ -11,5 +11,5 @@ resource "google_storage_bucket" "function_bucket" {
 resource "google_storage_bucket_object" "archive" {
   name   = "function.zip"
   bucket = google_storage_bucket.function_bucket.name
-  source = "../function.zip" # Use the pre-built archive from github workflow
+  source = var.source_path
 }

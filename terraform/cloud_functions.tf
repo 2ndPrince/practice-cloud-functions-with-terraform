@@ -8,8 +8,8 @@ resource "google_cloudfunctions2_function" "default" {
     entry_point = "collectOrdersFunction"
     source {
       storage_source {
-        bucket = google_storage_bucket.function_bucket.name
-        object = google_storage_bucket_object.archive.name
+        bucket = module.storage.function_bucket_name
+        object = module.storage.archive_name
       }
     }
   }
@@ -23,6 +23,6 @@ resource "google_cloudfunctions2_function" "default" {
 
   lifecycle {
     create_before_destroy = true
-    replace_triggered_by  = [google_storage_bucket_object.archive]
+    replace_triggered_by  = [module.storage.archive_name]
   }
 }
