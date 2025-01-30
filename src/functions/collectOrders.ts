@@ -14,9 +14,9 @@ export const collectOrders = async (req: Request, res: Response): Promise<void> 
     try {
         // 1. Use Amazon SP API client
         const spClient = new AmazonSpApiClient();
-        const newOrders = await spClient.listOrders({
-            createdAfter: '2023-01-01', // Example param
-        });
+        const newOrders = await spClient.listOrders(
+            "2025-01-01T00:00:00.000Z", "2025-01-05T00:00:00.000Z"
+        );
 
         res.status(200).json({
             message: 'Orders collected successfully!',
