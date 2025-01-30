@@ -14,6 +14,12 @@ provider "google" {
   zone    = var.project_zone
 }
 
+resource "google_firestore_database" "default" {
+  name     = "(default)"
+  location_id = "nam5"
+  type = "FIRESTORE_NATIVE"
+}
+
 resource "random_id" "default" {
   byte_length = 8
 }
@@ -79,16 +85,4 @@ resource "google_cloudfunctions2_function" "default" {
     create_before_destroy = true
     replace_triggered_by  = [google_storage_bucket_object.archive]
   }
-}
-
-resource "google_project_iam_member" "firestore_admin" {
-  project = var.project_id
-  role    = "roles/firestore.admin"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
-}
-
-resource "google_firestore_database" "default" {
-  name     = "(default)"
-  location_id = "nam5"
-  type = "FIRESTORE_NATIVE"
 }
