@@ -80,3 +80,11 @@ resource "google_cloudfunctions2_function" "default" {
     replace_triggered_by  = [google_storage_bucket_object.archive]
   }
 }
+
+resource "google_firestore_database" "default" {
+  name     = "(default)"
+  project  = var.project_id
+  location = var.project_region
+  location_id = "nam5"
+  type = "FIRESTORE_NATIVE"
+}
