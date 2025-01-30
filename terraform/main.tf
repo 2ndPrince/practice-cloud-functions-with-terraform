@@ -19,12 +19,6 @@ provider "google" {
   zone    = var.project_zone
 }
 
-resource "google_storage_bucket" "terraform_state" {
-    name                        = "terraform-state-bucket-augmented-pager-448118-m6"
-    location                    = var.project_region
-    uniform_bucket_level_access = true
-}
-
 resource "google_firestore_database" "default" {
   name     = "(default)"
   location_id = "nam5"
