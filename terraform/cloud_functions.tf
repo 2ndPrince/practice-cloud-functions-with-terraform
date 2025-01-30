@@ -23,6 +23,5 @@ resource "google_cloudfunctions2_function" "default" {
 
   lifecycle {
     create_before_destroy = true
-    replace_triggered_by  = [google_storage_bucket_object.archive]
   }
 }
