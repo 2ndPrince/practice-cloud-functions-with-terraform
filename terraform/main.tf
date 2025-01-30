@@ -92,3 +92,5 @@ resource "google_cloudfunctions2_function" "default" {
     replace_triggered_by  = [google_storage_bucket_object.archive]
   }
 }
+
+## triggering
