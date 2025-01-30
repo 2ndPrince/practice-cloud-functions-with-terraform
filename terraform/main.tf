@@ -58,6 +58,12 @@ resource "google_project_iam_member" "github_actions_sa_admin" {
   member  = "serviceAccount:${data.google_service_account.github_actions.email}"
 }
 
+resource "google_project_iam_member" "github_actions_firestore_admin" {
+  project = var.project_id
+  role    = "roles/datastore.owner"
+  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+}
+
 resource "google_cloudfunctions2_function" "default" {
   name        = "collect-orders-${var.commit_hash}"
   location    = "us-central1"
