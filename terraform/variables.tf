@@ -17,3 +17,9 @@ variable "commit_hash" {
   type        = string
   default     = "default"
 }
+
+variable "terraform_state_bucket_name" {
+  description = "The name of the bucket to store the terraform state"
+  type        = string
+  default     = "terraform-state-bucket"
+}
