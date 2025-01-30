@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = google_storage_bucket.terraform_state.name
+    bucket  = var.terraform_state_bucket_name
     prefix  = "terraform/state"
   }
 
@@ -20,7 +20,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "terraform_state" {
-    name                        = "terraform-state-bucket"
+    name                        = var.terraform_state_bucket_name
     location                    = var.project_region
     uniform_bucket_level_access = true
 }
@@ -47,26 +47,27 @@ resource "google_storage_bucket_object" "archive" {
   source = "../function.zip" # Use the pre-built archive from github workflow
 }
 
-data "google_service_account" "github_actions" {
-  account_id = "github-actions-sa"
+resource "google_service_account" "backend_service" {
+  account_id   = "backend-service-sa"
+  display_name = "Backend Service Account"
 }
 
 resource "google_project_iam_member" "github_actions_sa_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+  member  = "serviceAccount:${google_service_account.backend_service.email}"
 }
 
 resource "google_project_iam_member" "github_actions_sa_admin" {
   project = var.project_id
   role    = "roles/iam.serviceAccountAdmin"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+  member  = "serviceAccount:${google_service_account.backend_service.email}"
 }
 
 resource "google_project_iam_member" "github_actions_firestore_admin" {
   project = var.project_id
   role    = "roles/datastore.owner"
-  member  = "serviceAccount:${data.google_service_account.github_actions.email}"
+  member  = "serviceAccount:${google_service_account.backend_service.email}"
 }
 
 resource "google_cloudfunctions2_function" "default" {
@@ -86,7 +87,7 @@ resource "google_cloudfunctions2_function" "default" {
   }
 
   service_config {
-    service_account_email = data.google_service_account.github_actions.email
+    service_account_email = google_service_account.backend_service.email
     max_instance_count    = 1
     available_memory      = "256M"
     timeout_seconds       = 60
