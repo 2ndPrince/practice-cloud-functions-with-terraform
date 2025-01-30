@@ -17,7 +17,7 @@ provider "google" {
 resource "google_storage_bucket_object" "archive" {
   name   = "function.zip"
   bucket = module.storage.function_bucket_name
-  source = "../../../function.zip"
+  source = "../function.zip"
 }
 
 module "storage" {
