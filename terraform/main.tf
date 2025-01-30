@@ -83,8 +83,6 @@ resource "google_cloudfunctions2_function" "default" {
 
 resource "google_firestore_database" "default" {
   name     = "(default)"
-  project  = var.project_id
-  location = var.project_region
   location_id = "nam5"
   type = "FIRESTORE_NATIVE"
 }
