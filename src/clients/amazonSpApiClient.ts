@@ -1,6 +1,9 @@
 // functions/src/clients/amazonSpApiClient.ts
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
+
+const BASE_URL_SP_API = 'https://sellingpartnerapi-na.amazon.com';
+const BASE_URL_AUTH = 'https://api.amazon.com/auth/o2/token';
 
 /**
  * A simple placeholder for the Amazon SP API client.
@@ -8,19 +11,12 @@ import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
  * set the correct base URL, etc.
  */
 export class AmazonSpApiClient {
-    private client: AxiosInstance;
     private clientId: string | null = null;
     private clientSecret: string | null = null;
     private refreshToken: string | null = null;
     private secretManager: SecretManagerServiceClient;
 
     constructor() {
-        this.client = axios.create({
-            baseURL: 'https://sellingpartnerapi-na.amazon.com',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
 
         this.secretManager = new SecretManagerServiceClient();
     }
@@ -47,7 +43,7 @@ export class AmazonSpApiClient {
             this.refreshToken = refreshToken.payload?.data?.toString() || null;
 
             if (!this.clientId || !this.clientSecret || !this.refreshToken) {
-                throw new Error('Missing required secrets from GCP Secret Manager');
+                console.error('❌ Missing required secrets from GCP Secret Manager');
             }
 
             console.log('✅ Secrets successfully loaded from GCP');
@@ -72,7 +68,7 @@ export class AmazonSpApiClient {
         authPayload.append('client_secret', this.clientSecret as string);
 
         try {
-            const response = await axios.post('https://api.amazon.com/auth/o2/token', authPayload.toString(), {
+            const response = await axios.post(BASE_URL_AUTH, authPayload.toString(), {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             });
 
@@ -92,17 +88,17 @@ export class AmazonSpApiClient {
      * API call using fresh access token.
      */
     public async listOrders(createdAfter: string, createdBefore: string): Promise<any> {
-        const accessToken = await this.getAccessToken(); // Always get a fresh token
+        const accessToken = await this.getAccessToken(); // Always get a fresh token - no need to retain for serverless
 
         try {
-            const response = await axios.get('https://sellingpartnerapi-na.amazon.com/orders/v0/orders', {
+            const response = await axios.get(`${BASE_URL_SP_API}/orders/v0/orders`, {
                 headers: {
                     'x-amz-access-token': accessToken,
                 },
                 params: {
                     CreatedAfter: createdAfter,
                     CreatedBefore: createdBefore,
-                    MarketplaceIds: 'ATVPDKIKX0DER', // US marketplace
+                    MarketplaceIds: 'ATVPDKIKX0DER', // US marketplace ID
                 }
             });
 
