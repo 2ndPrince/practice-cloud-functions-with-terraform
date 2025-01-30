@@ -14,4 +14,10 @@ provider "google" {
   zone    = var.project_zone
 }
 
+module "storage" {
+  source = "./modules/storage"
+  project_region = var.project_region
+  source_path = "../../../function.zip"
+}
+
 #### triggering ..
