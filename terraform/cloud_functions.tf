@@ -1,0 +1,28 @@
+resource "google_cloudfunctions2_function" "default" {
+  name        = "collect-orders-${var.commit_hash}"
+  location    = "us-central1"
+  description = "A function that returns the current time"
+
+  build_config {
+    runtime     = "nodejs22"
+    entry_point = "collectOrdersFunction"
+    source {
+      storage_source {
+        bucket = google_storage_bucket.function_bucket.name
+        object = google_storage_bucket_object.archive.name
+      }
+    }
+  }
+
+  service_config {
+    service_account_email = google_service_account.backend_service.email
+    max_instance_count    = 1
+    available_memory      = "256M"
+    timeout_seconds       = 60
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    replace_triggered_by  = [google_storage_bucket_object.archive]
+  }
+}
