@@ -19,7 +19,9 @@ app.get('/test', (req, res) => {
     res.send('test');
 });
 
-app.post('/collectOrders', collectOrders);
+app.post('/collectOrders', async (req: Request, res: Response) => {
+    await collectOrders(req, res);
+});
 
 export default app;
 

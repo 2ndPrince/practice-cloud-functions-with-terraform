@@ -87,11 +87,11 @@ export class AmazonSpApiClient {
     /**
      * API call using fresh access token.
      */
-    public async listOrders(createdAfter: string, createdBefore: string): Promise<any> {
+    public async listOrders(createdAfter: string, createdBefore: string): Promise<AmazonOrder[]> {
         const accessToken = await this.getAccessToken(); // Always get a fresh token - no need to retain for serverless
 
         try {
-            const response = await axios.get(`${BASE_URL_SP_API}/orders/v0/orders`, {
+            const response = await axios.get<AmazonOrderResponse>(`${BASE_URL_SP_API}/orders/v0/orders`, {
                 headers: {
                     'x-amz-access-token': accessToken,
                 },
@@ -102,7 +102,7 @@ export class AmazonSpApiClient {
                 }
             });
 
-            return response.data;
+            return response.data.payload.Orders;
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('❌ Error fetching orders:', error.response?.data || error.message);
