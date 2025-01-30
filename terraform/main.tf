@@ -83,7 +83,7 @@ resource "google_cloudfunctions2_function" "default" {
 
 resource "google_project_iam_member" "firestore_admin" {
   project = var.project_id
-  role    = "roles/datastore.owner"
+  role    = "roles/firestore.owner"
   member  = "serviceAccount:${data.google_service_account.github_actions.email}"
 }
 
