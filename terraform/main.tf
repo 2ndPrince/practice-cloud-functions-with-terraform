@@ -37,7 +37,7 @@ resource "google_firestore_database" "default" {
 }
 
 resource "google_cloudfunctions2_function" "default" {
-  name        = "collect-orders-${var.commit_hash}"
+  name        = "collect-orders"
   location    = "us-central1"
   description = "A function that returns the current time"
 
