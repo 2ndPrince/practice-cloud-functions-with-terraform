@@ -1,9 +1,4 @@
 terraform {
-  backend "gcs" {
-    bucket  = "terraform-state-bucket-augmented-pager-448118-m6"
-    prefix  = "terraform/state"
-  }
-
   required_providers {
     google = {
       source  = "hashicorp/google"
@@ -19,34 +14,41 @@ provider "google" {
   zone    = var.project_zone
 }
 
+// Create a service account for the backend service
 resource "google_service_account" "backend_service" {
   account_id   = "backend-service-sa"
   display_name = "Backend Service Account"
 }
 
+// Grant the service account the necessary permissions
 module "iam" {
   source = "./modules/iam"
   project_id = var.project_id
   backend_service_account_email = google_service_account.backend_service.email
 }
 
+// Archive the function code - zipped from Github Workflow.
+// Can't be within module due to the need for the lifecycle block from cloud functions
 resource "google_storage_bucket_object" "archive" {
   name   = "function.zip"
   bucket = module.storage.function_bucket_name
   source = "../function.zip"
 }
 
+// Create a storage bucket for the function
 module "storage" {
   source = "./modules/storage"
   project_region = var.project_region
 }
 
+// Create a Firestore database
 resource "google_firestore_database" "default" {
   name        = "(default)"
   location_id = "nam5"
   type        = "FIRESTORE_NATIVE"
 }
 
+// Create a Cloud Function
 resource "google_cloudfunctions2_function" "default" {
   name        = "collect-orders"
   location    = "us-central1"
