@@ -19,6 +19,17 @@ provider "google" {
   zone    = var.project_zone
 }
 
+resource "google_service_account" "backend_service" {
+  account_id   = "backend-service-sa"
+  display_name = "Backend Service Account"
+}
+
+module "iam" {
+  source = "./modules/iam"
+  project_id = var.project_id
+  backend_service_account_email = google_service_account.backend_service.email
+}
+
 resource "google_storage_bucket_object" "archive" {
   name   = "function.zip"
   bucket = module.storage.function_bucket_name
