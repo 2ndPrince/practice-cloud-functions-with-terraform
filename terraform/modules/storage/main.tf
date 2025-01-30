@@ -7,9 +7,3 @@ resource "google_storage_bucket" "function_bucket" {
   location                    = var.project_region
   uniform_bucket_level_access = true
 }
-
-resource "google_storage_bucket_object" "archive" {
-  name   = "function.zip"
-  bucket = google_storage_bucket.function_bucket.name
-  source = var.source_path
-}
