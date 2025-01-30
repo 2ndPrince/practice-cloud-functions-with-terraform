@@ -9,7 +9,7 @@ resource "google_cloudfunctions2_function" "default" {
     source {
       storage_source {
         bucket = module.storage.function_bucket_name
-        object = module.storage.archive_name
+        object = google_storage_bucket_object.archive.name
       }
     }
   }
@@ -23,5 +23,6 @@ resource "google_cloudfunctions2_function" "default" {
 
   lifecycle {
     create_before_destroy = true
+    replace_triggered_by  = [google_storage_bucket_object.archive]
   }
 }
