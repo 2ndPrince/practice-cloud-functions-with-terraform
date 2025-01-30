@@ -1,5 +1,6 @@
 // functions/src/clients/amazonSpApiClient.ts
 import axios, { AxiosInstance } from 'axios';
+import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
 
 /**
  * A simple placeholder for the Amazon SP API client.
@@ -19,6 +20,27 @@ export class AmazonSpApiClient {
                 // e.g. x-amz-access-token, etc.
             },
         });
+
+        this.printSecret();
+    }
+
+    private async printSecret(): Promise<void> {
+        const client = new SecretManagerServiceClient();
+
+        try {
+            const [version] = await client.accessSecretVersion({
+                name: 'projects/554863697533/secrets/SP_API_CLIENT_ID/versions/latest',
+            });
+            if (version.payload && version.payload.data) {
+                const secret = version.payload.data.toString();
+                console.log('SP_API_CLIENT_ID:', secret);
+            } else {
+                console.error('Secret payload is null or undefined');
+            }
+
+        } catch (error) {
+            console.error('Error accessing secret:', error);
+        }
     }
 
     /**
