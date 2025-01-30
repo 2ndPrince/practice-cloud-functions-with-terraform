@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = "terraform-state-bucket"
+    bucket  = "terraform-state-bucket-augmented-pager-448118-m6"
     prefix  = "terraform/state"
   }
 
@@ -20,7 +20,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "terraform_state" {
-    name                        = "terraform-state-bucket"
+    name                        = "terraform-state-bucket-augmented-pager-448118-m6"
     location                    = var.project_region
     uniform_bucket_level_access = true
 }
