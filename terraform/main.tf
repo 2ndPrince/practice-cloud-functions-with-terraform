@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket  = var.terraform_state_bucket_name
+    bucket  = "terraform-state-bucket"
     prefix  = "terraform/state"
   }
 
@@ -20,7 +20,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "terraform_state" {
-    name                        = var.terraform_state_bucket_name
+    name                        = "terraform-state-bucket"
     location                    = var.project_region
     uniform_bucket_level_access = true
 }
