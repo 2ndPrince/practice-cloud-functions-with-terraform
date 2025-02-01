@@ -14,6 +14,8 @@ export class AmazonSpApiClient {
     private clientId: string | null = null;
     private clientSecret: string | null = null;
     private refreshToken: string | null = null;
+    private accessToken: string | null = null;
+    private accessTokenExpiry: number | null = null;
     private secretManager: SecretManagerServiceClient;
 
     constructor() {
@@ -57,6 +59,11 @@ export class AmazonSpApiClient {
      * Get a new access token from Amazon using the refresh token.
      */
     private async getAccessToken(): Promise<string> {
+        if (this.accessToken && this.accessTokenExpiry && Date.now() < this.accessTokenExpiry) {
+            console.log('🔑 Using cached access token');
+            return this.accessToken;
+        }
+
         if (!this.clientId || !this.clientSecret || !this.refreshToken) {
             await this.fetchSecrets();
         }
@@ -71,6 +78,9 @@ export class AmazonSpApiClient {
             const response = await axios.post(BASE_URL_AUTH, authPayload.toString(), {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             });
+
+            this.accessToken = response.data.access_token;
+            this.accessTokenExpiry = Date.now() + response.data.expires_in * 1000;
 
             console.log('✅ Successfully authenticated with Amazon SP API');
             return response.data.access_token; // Always get a fresh token
@@ -87,22 +97,36 @@ export class AmazonSpApiClient {
     /**
      * API call using fresh access token.
      */
-    public async listOrders(createdAfter: string, createdBefore: string): Promise<AmazonOrder[]> {
+    public async listOrders(createdAfter: string, createdBefore: string, nextToken?: string): Promise<AmazonOrder[]> {
         const accessToken = await this.getAccessToken(); // Always get a fresh token - no need to retain for serverless
+        const orders: AmazonOrder[] = [];
+
+        const params: any = {
+            CreatedAfter: createdAfter,
+            CreatedBefore: createdBefore,
+            MarketplaceIds: 'ATVPDKIKX0DER', // US marketplace ID
+        }
+
+        if (nextToken) {
+            params.NextToken = nextToken;
+        }
 
         try {
             const response = await axios.get<AmazonOrderResponse>(`${BASE_URL_SP_API}/orders/v0/orders`, {
                 headers: {
                     'x-amz-access-token': accessToken,
                 },
-                params: {
-                    CreatedAfter: createdAfter,
-                    CreatedBefore: createdBefore,
-                    MarketplaceIds: 'ATVPDKIKX0DER', // US marketplace ID
-                }
+                params,
             });
 
-            return response.data.payload.Orders;
+            orders.push(...response.data.payload.Orders);
+
+            if (response.data.payload.NextToken) {
+                const nextOrders = await this.listOrders(createdAfter, createdBefore, response.data.payload.NextToken);
+                orders.push(...nextOrders);
+            }
+
+            return orders;
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('❌ Error fetching orders:', error.response?.data || error.message);

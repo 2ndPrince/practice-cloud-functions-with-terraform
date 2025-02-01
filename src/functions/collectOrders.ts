@@ -1,9 +1,9 @@
 // functions/src/functions/collectOrders.ts
 import { Request, Response } from 'express';
 import { AmazonSpApiClient } from '../clients/amazonSpApiClient';
-import { Firestore } from '@google-cloud/firestore';
+import { saveOrders } from "../databases/firestoreClient";
 
-const firestore = new Firestore();
+
 
 /**
  * Core logic to collect orders from the Amazon SP API
@@ -36,15 +36,7 @@ export const collectOrders = async (req: Request, res: Response): Promise<Amazon
             data: newOrders,
         });
 
-        const batch = firestore.batch();
-        newOrders.forEach((order) => {
-            const orderRef = firestore.collection('orders').doc(order.AmazonOrderId);
-            batch.set(orderRef, order);
-        });
-        await batch.commit();
-        console.log('✅ Orders saved to Firestore');
-
-        // save orders to Firestore
+        await saveOrders(newOrders);
 
         return newOrders;
     } catch (error) {
