@@ -2,6 +2,7 @@ interface AmazonOrderResponse {
     payload: {
         Orders: AmazonOrder[];
         CreatedBefore: string;
+        NextToken: string;
     };
 }
 
