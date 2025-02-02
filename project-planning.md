@@ -18,3 +18,12 @@
 - Create a scheduer to trigger the triggering function daily
 - Spike: Use Analytics for orders data
 - Spike: Design a frontend to support similar analytics to my customers
+
+
+
+# Business Needs
+- Reveal Purchase Trends
+  - Reward loyal customers
+  - Offer better discounts
+- Remind of Low Inventory
+- Send Weekly P&L Report (via Texts and Emails)
