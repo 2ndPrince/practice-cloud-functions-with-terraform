@@ -2,8 +2,8 @@
 import { Request, Response } from 'express';
 import { AmazonSpApiClient } from '../clients/amazonSpApiClient';
 import { saveOrders } from "../databases/firestoreClient";
-
-
+import { AmazonOrder } from "../interfaces/amazonOrder.Interface";
+import { OrderConverter } from '../util/orderConverter';
 
 /**
  * Core logic to collect orders from the Amazon SP API
@@ -27,16 +27,25 @@ export const collectOrders = async (req: Request, res: Response): Promise<Amazon
 
         // 1. Use Amazon SP API client
         const spClient = new AmazonSpApiClient();
+
+        // 2. Fetch orders between the specified dates
         const newOrders = await spClient.listOrders(
             createdAfter, createdBefore
         );
+
+        // 3. Convert the orders to Firestore format
+        const dbOrders = newOrders.map((order) => OrderConverter.convertToDBAmazonOrder(order));
+        await saveOrders(dbOrders);
+
+        // 4. Get order item details for new orders
+        for (const order of newOrders) {
+            const orderItems = await spClient.getOrderItems(order.AmazonOrderId);
+        }
 
         res.status(200).json({
             message: 'Orders collected successfully!',
             data: newOrders,
         });
-
-        await saveOrders(newOrders);
 
         return newOrders;
     } catch (error) {
