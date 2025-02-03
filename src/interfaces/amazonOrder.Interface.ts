@@ -1,4 +1,4 @@
-interface AmazonOrderResponse {
+export interface AmazonOrderResponse {
     payload: {
         Orders: AmazonOrder[];
         CreatedBefore: string;
@@ -6,7 +6,7 @@ interface AmazonOrderResponse {
     };
 }
 
-interface AmazonOrder {
+export interface AmazonOrder {
     AmazonOrderId: string;
     SellerOrderId: string;
     PurchaseDate: string;

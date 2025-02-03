@@ -1,6 +1,7 @@
 // functions/src/clients/amazonSpApiClient.ts
 import axios from 'axios';
-import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { AmazonOrder, AmazonOrderResponse } from "../interfaces/amazonOrder.Interface";
 
 const BASE_URL_SP_API = 'https://sellingpartnerapi-na.amazon.com';
 const BASE_URL_AUTH = 'https://api.amazon.com/auth/o2/token';
@@ -19,7 +20,6 @@ export class AmazonSpApiClient {
     private secretManager: SecretManagerServiceClient;
 
     constructor() {
-
         this.secretManager = new SecretManagerServiceClient();
     }
 
@@ -134,6 +134,31 @@ export class AmazonSpApiClient {
                 console.error('❌ Error fetching orders:', error);
             }
             throw new Error('Failed to fetch orders');
+        }
+    }
+
+    // Get order details
+    // {{baseUrl}}/orders/v0/orders/:orderId/orderItems
+    public async getOrderItems(orderId: string): Promise<AmazonOrderItem[]> {
+        const accessToken = await this.getAccessToken();
+        const orderItems: AmazonOrderItem[] = [];
+
+        try {
+            const response = await axios.get<AmazonOrderItemResponse>(`${BASE_URL_SP_API}/orders/v0/orders/${orderId}/orderItems`, {
+                headers: {
+                    'x-amz-access-token': accessToken,
+                },
+            });
+
+            orderItems.push(...response.data.payload.OrderItems);
+            return orderItems;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('❌ Error fetching order items:', error.response?.data || error.message);
+            } else {
+                console.error('❌ Error fetching order items:', error);
+            }
+            throw new Error('Failed to fetch order items');
         }
     }
 }
