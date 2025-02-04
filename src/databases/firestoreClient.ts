@@ -2,7 +2,9 @@
 import { Firestore } from '@google-cloud/firestore';
 import { DBAmazonOrder } from "../interfaces/dbAmazonOrder.interface";
 
-const firestore = new Firestore();
+const firestore = new Firestore({
+    ignoreUndefinedProperties: true,
+});
 
 export const saveOrders = async (orders: DBAmazonOrder[]): Promise<number> => {
     const batch = firestore.batch();
